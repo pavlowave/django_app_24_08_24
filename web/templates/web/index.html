@@ -1,0 +1,14 @@
+{%  extends 'web/base.html' %}
+
+{%  block body %}
+
+        <div class="card" style="width: 30%; margin: 10% auto auto;">
+        <div class="card-body" style="background-color: #2aabd2; border-color: #1A01CC">
+            <div class="row" >
+                <div class="col">
+                    <button onclick="document.location.href='{% url "web:profile" %}'">Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
