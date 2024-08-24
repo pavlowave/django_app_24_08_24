@@ -28,13 +28,10 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 			<div class="agileits-top">
 				<form method="post">
                     {% csrf_token %}
-					<input class="text" type="text" name="username" placeholder="Username" required="">
 					<input class="text email" type="email" name="email" placeholder="Email" required="">
-					<input class="text" type="password" name="password1" placeholder="Password" required="">
-					<input class="text w3lpass" type="password" name="password2" placeholder="Confirm Password" required="">
 					<div class="wthree-text">
 						<label class="anim">
-							<input type="checkbox" class="checkbox" required="">
+							<input type="checkbox" class="checkbox" name="confirmation">
 							<span>I Agree To The Terms & Conditions</span>
 						</label>
 						<div class="clear"> </div>

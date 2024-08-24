@@ -138,3 +138,13 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = 'pavlowave@yandex.ru'
 EMAIL_HOST_PASSWORD = 'waufrybbzzghroly'
 DEFAULT_FROM_EMAIL = 'pavlowave@yandex.ru'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
+
+DJANGO_APP_USER_CONFIRMATION_KEY = "user_confirmation_{token}"
+DJANGO_APP_USER_CONFIRMATION_TIMEOUT = 300
