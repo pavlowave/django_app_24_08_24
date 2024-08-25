@@ -148,3 +148,6 @@ CACHES = {
 
 DJANGO_APP_USER_CONFIRMATION_KEY = "user_confirmation_{token}"
 DJANGO_APP_USER_CONFIRMATION_TIMEOUT = 300
+
+# Ограничение на частоту отправки писем (в секундах)
+EMAIL_SEND_COOLDOWN = 60

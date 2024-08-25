@@ -1,10 +1,12 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
 from core.models import Pan
 
-from core.models import Buyer
+# Получаем модель пользователя через get_user_model
+User = get_user_model()
 
 
 class PanForm(forms.ModelForm):
@@ -29,4 +31,3 @@ class RegisterForm(forms.Form):
     def clean_confirmation(self):
         if self.cleaned_data["confirmation"] is not True:
             raise ValidationError("You must confirm!")
-

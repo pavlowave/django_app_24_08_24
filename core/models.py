@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -12,34 +13,38 @@ from django.urls import reverse
 
 
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        return self.create_user(email, password, **extra_fields)
+
 class Buyer(AbstractUser):
-    username = models.CharField(
-        _("username"),
-        max_length=150,
-        help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
-        ),
-        validators=[AbstractUser.username_validator],
-        error_messages={
-            "unique": _("A user with that username already exists."),
-        },
-        null=True,
-        blank=True,
-    )
-
-    email = models.EmailField(_("email address"), unique=True, )
-
+    email = models.EmailField(_("email address"), unique=True)
     is_active = models.BooleanField(
         _("active"),
         default=False,
-        help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
-        ),
+        help_text=_("Designates whether this user should be treated as active. Unselect this instead of deleting accounts."),
     )
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    # Не требуется поле username, если оно не нужно
+    username = None
 
 
 class PriceMixin(models.Model):
