@@ -98,7 +98,7 @@ class Potato(PriceMixin):
 
 class Purchase(models.Model):
     """
-        Объект описывающий сущность покуаки чего либо.
+        Объект описывающий сущность покупки чего-либо.
     """
     created_at = models.DateTimeField(auto_now_add=True)
     count = models.DecimalField(decimal_places=2, max_digits=4,
@@ -121,7 +121,7 @@ class Purchase(models.Model):
     @property
     def cost(self):
         """
-            Возсращает стоимость покупки
+            Возвращает стоимость покупки
         :return: float
         """
         return self.count * self.product.price
