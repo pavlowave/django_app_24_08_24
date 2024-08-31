@@ -11,5 +11,5 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('register/', RegisterView.as_view(), name='register'),
     path('password_reset/', WebPasswordResetView.as_view(), name='password_reset'),
-    path('register_confirm/<token>/', register_confirm, name='register_confirm'),
+    path('register/confirm/<str:token>/', register_confirm, name='register_confirm'),
 ]

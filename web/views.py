@@ -63,28 +63,25 @@ class RegisterView(FormView):
             return self.form_invalid(form)
 
         user, created = User.objects.get_or_create(email=email)
-        new_pass = None
+        new_code = None
 
         if created:
-            alphabet = string.ascii_letters + string.digits
-            new_pass = ''.join(secrets.choice(alphabet) for i in range(8))
-            user.set_password(new_pass)
-            user.save(update_fields=["password", ])
+            new_code = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(8))
+            user.set_password(new_code)
+            user.is_active = False  # Делаем пользователя неактивным до подтверждения
+            user.save(update_fields=["password", "is_active"])
 
-        if new_pass or user.is_active is False:
-            token = uuid.uuid4().hex
-            redis_key = settings.DJANGO_APP_USER_CONFIRMATION_KEY.format(token=token)
-            cache.set(redis_key, {"buyer_id": user.id}, timeout=settings.DJANGO_APP_USER_CONFIRMATION_TIMEOUT)
+        if new_code or not user.is_active:
+            # Генерируем токен для подтверждения
+            token = secrets.token_urlsafe(16)
+            cache.set(token, user.id, timeout=15 * 60)  # Сохраняем токен на 15 минут
 
             confirm_link = self.request.build_absolute_uri(
-                reverse_lazy(
-                    "web:register_confirm", kwargs={"token": token}
-                )
+                reverse_lazy("web:register_confirm", kwargs={"token": token})
             )
-            message = _(f"follow this link %s \n"
-                        f"to confirm! \n" % confirm_link)
-            if new_pass:
-                message += f"Your new password: {new_pass} \n "
+            message = _(f"Follow this link to confirm your registration: {confirm_link}\n")
+            if new_code:
+                message += f"Your verification code and main code: {new_code}\n"
 
             send_mail(
                 subject=_("Please confirm your registration!"),
@@ -100,16 +97,24 @@ class RegisterView(FormView):
 
 
 def register_confirm(request, token):
-    redis_key = settings.DJANGO_APP_USER_CONFIRMATION_KEY.format(token=token)
-    buyer_info = cache.get(redis_key) or {}
+    user_id = cache.get(token)
 
-    if buyer_id := buyer_info.get("buyer_id"):
-        buyer = get_object_or_404(User, id=buyer_id)
-        buyer.is_active = True
-        buyer.save(update_fields=["is_active"])
-        return redirect(to=reverse_lazy("web:profile"))
-    else:
+    if not user_id:
         return redirect(to=reverse_lazy("web:register"))
+
+    user = get_object_or_404(User, id=user_id)
+    if request.method == "POST":
+        code = request.POST.get("code")
+        if code and user.check_password(code):
+            user.is_active = True
+            user.save(update_fields=["is_active"])
+            login(request, user)
+            return redirect(to=reverse_lazy("web:profile"))
+        else:
+            return render(request, "registration/confirm.html", {"error": _("Invalid confirmation code.")})
+
+    return render(request, "registration/confirm.html")
+
 
 
 def index(request):
