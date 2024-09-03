@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include, re_path
 from .views import PanCreateView, PanUpdateView, PanDeleteView, profile_view, RegisterView, WebPasswordResetView, \
     register_confirm
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('password_reset/', WebPasswordResetView.as_view(), name='password_reset'),
     path('register/confirm/<str:token>/', register_confirm, name='register_confirm'),
+
 ]

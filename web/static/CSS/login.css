@@ -34,9 +34,9 @@ body {
     object-fit: cover;
     border-radius: 50%;
     box-shadow: 0px 0px 3px #5f5f5f,
-        0px 0px 0px 5px #ecf0f3,
-        8px 8px 15px #a7aaa7,
-        -8px -8px 15px #fff;
+                0px 0px 0px 5px #ecf0f3,
+                8px 8px 15px #a7aaa7,
+                -8px -8px 15px #fff;
 }
 
 .wrapper .name {
@@ -56,7 +56,6 @@ body {
     font-size: 1.2rem;
     color: #666;
     padding: 10px 15px 10px 10px;
-    /* border: 1px solid red; */
 }
 
 .wrapper .form-field {
@@ -78,7 +77,7 @@ body {
     color: #fff;
     border-radius: 25px;
     box-shadow: 3px 3px 3px #b1b1b1,
-        -3px -3px 3px #fff;
+                -3px -3px 3px #fff;
     letter-spacing: 1.3px;
 }
 
@@ -101,4 +100,24 @@ body {
         margin: 30px 20px;
         padding: 40px 15px 15px 15px;
     }
+}
+
+/* CSS для социальных кнопок */
+.btn-primary {
+    background-color: #4c8bf5;
+    border-color: #4c8bf5;
+}
+
+.btn-danger {
+    background-color: #ff5e5e;
+    border-color: #ff5e5e;
+}
+
+.btn-dark {
+    background-color: #333;
+    border-color: #333;
+}
+
+.btn-primary i, .btn-danger i, .btn-dark i {
+    margin-right: 8px;
 }

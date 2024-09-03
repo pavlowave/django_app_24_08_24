@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-0*0txh5iz-hyn&m3%ek+_sy@%duh@6px5um_0slos9zb9k1um7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
     'core',
-    'web',
+    'web.apps.WebConfig',
+    'pytest'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'django_app.urls'
@@ -83,8 +86,22 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.mailru.MRGOAuth2',
+    'web.backend_yandex.YandexOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
-
+# Ключи для Яндекс и мейлру
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23lirOkkwuxBeMzswf'
+SOCIAL_AUTH_GITHUB_SECRET = 'ab0b3b27d07144d19cde75451b854f3b64e3e7e2'
+SOCIAL_AUTH_MAILRU_KEY = '2e93ad9156f14ce99efd9a8d52a8caf8'
+SOCIAL_AUTH_MAILRU_SECRET = '51ac8e08fa0e47c7a0cc54bdf038f111'
+SOCIAL_AUTH_YANDEX_KEY = '05f152ab5c284fe09aec87e2daaad44b'
+SOCIAL_AUTH_YANDEX_SECRET = 'beac0ebdabd24e79984016c837c765cd'
+SOCIAL_AUTH_YANDEX_OAUTH2_KEY = '05f152ab5c284fe09aec87e2daaad44b'
+SOCIAL_AUTH_YANDEX_OAUTH2_SECRET = 'beac0ebdabd24e79984016c837c765cd'
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -139,14 +156,30 @@ EMAIL_HOST_USER = 'pavlowave@yandex.ru'
 EMAIL_HOST_PASSWORD = 'waufrybbzzghroly'
 DEFAULT_FROM_EMAIL = 'pavlowave@yandex.ru'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
-}
-
-DJANGO_APP_USER_CONFIRMATION_KEY = "user_confirmation_{token}"
-DJANGO_APP_USER_CONFIRMATION_TIMEOUT = 300
 
 # Ограничение на частоту отправки писем (в секундах)
 EMAIL_SEND_COOLDOWN = 60
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',  # Добавлено для ассоциации по email
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'web.social_auth_pipeline.activate_user',
+)
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/web/profile/'
+SOCIAL_AUTH_LOGIN_URL = '/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/admin/'
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://f8c9-91-210-24-156.ngrok-free.app',
+]

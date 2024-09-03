@@ -1,8 +1,7 @@
 import secrets
 import string
-import uuid
 import time
-
+from django.contrib.auth import login as auth_login
 from django.conf import settings
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.decorators import login_required
@@ -51,6 +50,11 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         email = form.cleaned_data["email"]
+        # Проверка наличия email в базе данных
+        user_exists = User.objects.filter(email=email, is_active=True).exists()
+        if user_exists:
+            form.add_error("email", _("This email is already in use."))
+            return self.form_invalid(form)
         cache_key = f"email_sent_{email}"
         last_sent = cache.get(cache_key)
 
@@ -108,7 +112,7 @@ def register_confirm(request, token):
         if code and user.check_password(code):
             user.is_active = True
             user.save(update_fields=["is_active"])
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect(to=reverse_lazy("web:profile"))
         else:
             return render(request, "registration/confirm.html", {"error": _("Invalid confirmation code.")})
