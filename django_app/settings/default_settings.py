@@ -181,5 +181,5 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = '/admin/'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://f8c9-91-210-24-156.ngrok-free.app',
+    'https://23f5-91-210-24-156.ngrok-free.app',
 ]
