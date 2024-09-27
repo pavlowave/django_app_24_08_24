@@ -5,9 +5,10 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext, ContextTypes
 
+from tg_bot.handlers.onboarding.handlers.email_hand.email_handler import ASK_EMAIL
 from tg_bot.handlers.onboarding.keyboards.base_key.bas_key import make_keyboard_for_start_command
 from tg_bot.handlers.onboarding.manage_data import MY_PROFILE_BUTTON, DIRECTORY_BUTTON, CALCULATION_CALORIES, \
-    HELP_BUTTON, BACK_BUTTON
+    HELP_BUTTON, BACK_BUTTON, EMAIL_BUTTON
 from tg_bot.handlers.onboarding.utils.info import extract_user_data_from_update
 
 # Enable logging
@@ -19,7 +20,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
-
+START, START_OVER = range(2)
 
 async def start(update: Update, context: CallbackContext) -> None:
     user_data = extract_user_data_from_update(update)
@@ -76,7 +77,7 @@ async def button_menu_click(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         if user_exists:
             # Если email имеет формат @telegram.com, это означает, что email не привязан
             buttons = [
-                [InlineKeyboardButton('Привязать email', callback_data='bind_email')],
+                [InlineKeyboardButton('Привязать email', callback_data=f'{EMAIL_BUTTON}')],
                 [InlineKeyboardButton('Назад', callback_data=BACK_BUTTON)]
             ]
             reply_markup = InlineKeyboardMarkup(buttons)
@@ -86,7 +87,7 @@ async def button_menu_click(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             user_instance = await sync_to_async(user.first)()  # Получаем первого пользователя
             email = user_instance.email if user_instance else "Email не найден"
             buttons = [
-                [InlineKeyboardButton('Изменить email', callback_data='change_email')],
+                [InlineKeyboardButton('Изменить email', callback_data=f'{EMAIL_BUTTON}')],
                 [InlineKeyboardButton('Назад', callback_data=BACK_BUTTON)]
             ]
             reply_markup = InlineKeyboardMarkup(buttons)
@@ -99,6 +100,7 @@ async def button_menu_click(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             reply_markup=reply_markup,
             parse_mode=ParseMode.HTML
         )
+        context.user_data['current_state'] = ASK_EMAIL
 
     elif data == CALCULATION_CALORIES:
         pass

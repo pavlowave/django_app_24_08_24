@@ -45,8 +45,18 @@ class Buyer(AbstractUser):
 
     # Не требуется поле username, если оно не нужно
     username = None
+    @classmethod
+    def get_or_create_user(cls, user_data): # Cоздаём пользователя в базе данных
+        user_id = user_data.get('user_id')
+        email = f"{user_id}@telegram.com"
+        user, created = cls.objects.get_or_create(
+            email=email,
+            defaults={'is_active': True}
+        )
+        return user, created
 
-
+    def __str__(self):
+        return f'@{self.username}' if self.username is not None else f'{self.email}'
 class PriceMixin(models.Model):
     """
         Абстрактная родительская таблица для общих полей и методов, чтобы не повторяться

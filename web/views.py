@@ -127,3 +127,6 @@ def index(request):
 
 class WebPasswordResetView(PasswordResetView):
     template_name = 'web/password_reset_email.html'
+
+
+
