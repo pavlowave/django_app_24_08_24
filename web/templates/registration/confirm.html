@@ -1,9 +1,0 @@
-<form method="post">
-    {% csrf_token %}
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
-    <label for="code">Enter the confirmation code:</label>
-    <input type="text" id="code" name="code" required>
-    <button type="submit">Confirm</button>
-</form>
