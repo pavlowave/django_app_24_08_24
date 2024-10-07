@@ -1,37 +1,50 @@
 import time
 import string
 import secrets
-from django.urls import reverse_lazy
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegistrationSerializer
-from django.shortcuts import get_object_or_404, render, redirect
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .serializers import LoginSerializer, RegistrationSerializer
+from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login
+from django.contrib.auth.views import PasswordResetView
 from django.core.cache import cache
-from django.conf import settings
 from django.core.mail import send_mail
+from django.conf import settings
 from django.urls import reverse
-from django.views import View
-from django.views.generic import TemplateView
+
 
 
 User = get_user_model()
 
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
 
-class CabinetView(TemplateView):
-    template_name = 'cabinet/cabinet.html'
+    def get(self, request):
+        return render(request, 'registration/login.html')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['email'] = self.request.user.email
-        return context
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        email = request.user.email
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            login(request, user)  # Вход пользователя
+            return render(request, 'cabinet/cabinet.html', {'email': email})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CabinetAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        email = request.user.email
+        return render(request, 'cabinet/cabinet.html', {'email': email})
 
 
 class RegistrationAPIView(APIView):
 
     def get(self, request):
-        # Возвращаем HTML-шаблон с формой регистрации
         return render(request, 'registration/registration.html', {'user': request.user})
 
     def post(self, request):
@@ -75,6 +88,7 @@ class RegistrationAPIView(APIView):
 
 
 class ConfirmRegistrationAPIView(APIView):
+
     def get(self, request):
         email = request.GET.get('email')
         return render(request, 'registration/confirm_registration.html', {'email': email})
@@ -95,3 +109,7 @@ class ConfirmRegistrationAPIView(APIView):
             return redirect(reverse('cabinet'))
 
         return Response({'detail': 'Неверный код подтверждения.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WebPasswordResetAPIView(PasswordResetView):
+    template_name = 'reset_password/password_reset_email.html'
