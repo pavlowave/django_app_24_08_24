@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'modules.custom_auth.apps.CustomAuthConfig',
     #user
     'modules.user.apps.UserConfig',
+    #admin
+    'modules.custom_admin.apps.CustomAdminConfig',
 
 ]
 

@@ -45,6 +45,25 @@
         .logout-button:hover {
             background-color: #e84118;
         }
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .nav-buttons a {
+            display: block;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .nav-buttons a:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +78,16 @@
             {% csrf_token %}
             <button type="submit" class="logout-button">Выйти</button>
         </form>
+
+        <!-- Кнопки навигации -->
+        <div class="nav-buttons">
+            <a href="{% url 'cabinet' %}">Главная</a>
+            <a href="#">Бар</a>
+            <a href="#">Тренеры</a>
+            <a href="#">Групповые</a>
+            <a href="#">Массаж</a>
+            <a href="#">Оплата</a>
+        </div>
     </div>
 </body>
 </html>
