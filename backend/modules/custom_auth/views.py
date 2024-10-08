@@ -14,7 +14,9 @@ from django.core.cache import cache
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
-
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
+from django.views import View
 
 
 User = get_user_model()
@@ -27,18 +29,24 @@ class LoginAPIView(APIView):
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
-        email = request.user.email
+        if request.user.is_authenticated:
+            email = request.user.email
+        else:
+            email = None
         if serializer.is_valid():
             user = serializer.validated_data['user']
             login(request, user)  # Вход пользователя
-            return render(request, 'cabinet/cabinet.html', {'email': email})
+            return redirect(reverse('cabinet') + f'?email={email}')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CabinetAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        email = request.user.email
+        if request.user.is_authenticated:
+            email = request.user.email
+        else:
+            email = None
         return render(request, 'cabinet/cabinet.html', {'email': email})
 
 
@@ -113,3 +121,14 @@ class ConfirmRegistrationAPIView(APIView):
 
 class WebPasswordResetAPIView(PasswordResetView):
     template_name = 'reset_password/password_reset_email.html'
+
+
+
+class LogoutView(View):
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            # Завершаем сессию пользователя
+            logout(request)
+        # Перенаправляем пользователя на главную страницу или другую страницу после выхода
+        return HttpResponseRedirect('/')

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,9 +53,11 @@
         <div class="email">
             <p>Ваш адрес электронной почты: <strong>{{ email }}</strong></p>
         </div>
-        <form method="POST" action="{% url 'logout' %}">
+
+        <!-- Форма для выхода из системы -->
+        <form action="{% url 'logout' %}" method="get">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit" class="logout-button">Выйти</button>
         </form>
     </div>
 </body>

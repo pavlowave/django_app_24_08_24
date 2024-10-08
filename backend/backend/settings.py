@@ -126,8 +126,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-LOGIN_REDIRECT_URL = reverse_lazy('cabinet')
-
+LOGIN_REDIRECT_URL = '/api/v1/login/'
+LOGOUT_REDIRECT_URL = '/api/v1/login/'
 # SMTP settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_SEND_COOLDOWN = 60
