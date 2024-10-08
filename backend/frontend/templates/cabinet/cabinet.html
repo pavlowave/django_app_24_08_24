@@ -64,6 +64,13 @@
         .nav-buttons a:hover {
             background-color: #2980b9;
         }
+        .admin-controls {
+            margin-top: 30px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -88,6 +95,15 @@
             <a href="#">Массаж</a>
             <a href="#">Оплата</a>
         </div>
+
+        {% if is_admin %}
+        <div class="admin-controls">
+            <h2>Управление ролями</h2>
+            <p>Как администратор, вы можете назначать роли другим пользователям.</p>
+            <a href="{% url 'assign_role' %}" class="nav-buttons">Назначить роль</a>
+            <a href="{% url 'view_users' %}" class="nav-buttons">Просмотреть пользователей</a>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

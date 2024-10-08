@@ -43,11 +43,10 @@ class LoginAPIView(APIView):
 class CabinetAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            email = request.user.email
-        else:
-            email = None
-        return render(request, 'cabinet/cabinet.html', {'email': email})
+        email = request.user.email if request.user.is_authenticated else None
+        is_admin = request.user.role == 'admin'  # Проверка на роль админа
+
+        return render(request, 'cabinet/cabinet.html', {'email': email, 'is_admin': is_admin})
 
 
 class RegistrationAPIView(APIView):

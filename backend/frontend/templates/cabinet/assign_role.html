@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Назначение ролей</title>
+    <style>
+        /* Стили можно добавить здесь */
+    </style>
+</head>
+<body>
+    <h1>Назначение ролей</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <select name="user_id">
+            {% for user in users %}
+                <option value="{{ user.id }}">{{ user.email }}</option>
+            {% endfor %}
+        </select>
+        <select name="role">
+            <option value="visitor">Посетитель</option>
+            <option value="trainer">Тренер</option>
+            <option value="masseur">Массажист</option>
+            <option value="admin">Админ</option>
+        </select>
+        <button type="submit">Назначить роль</button>
+    </form>
+    <a href="{% url 'cabinet' %}">Назад</a>
+</body>
+</html>

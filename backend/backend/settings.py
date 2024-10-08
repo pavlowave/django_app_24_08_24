@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     #user
     'modules.user.apps.UserConfig',
     #admin
-    'modules.custom_admin.apps.CustomAdminConfig',
+    'modules.cabinet.apps.CabinetConfig',
 
 ]
 
