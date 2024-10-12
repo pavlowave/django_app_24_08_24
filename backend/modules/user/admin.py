@@ -33,12 +33,12 @@
 
 
 
-from django.contrib.auth.admin import Group, UserAdmin
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import Group
 from .models import CustomUser
 
-class CustomUserAdmin(UserAdmin):
+class CustomUserAdmin(BaseUserAdmin):
     model = CustomUser
     list_display = ('email', 'role', 'is_active', 'is_staff')
     list_filter = ('role', 'is_active', 'is_staff')
@@ -47,22 +47,16 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Permissions', {'fields': ('role', 'is_active', 'is_staff')}),
+        ('Permissions', {'fields': ('role', 'is_active', 'is_staff', 'groups')}),  # Добавление групп
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'role', 'is_active', 'is_staff')}
+            'fields': ('email', 'password1', 'password2', 'role', 'is_active', 'is_staff', 'groups')}
         ),
     )
 
-    # Настройка разрешений
-    def has_change_permission(self, request, obj=None):
-        # Проверяем, есть ли у пользователя право назначать роли
-        if request.user.has_perm('yourapp.can_assign_trainer_role') or request.user.has_perm('yourapp.can_assign_masseur_role'):
-            return True
-        return super().has_change_permission(request, obj)
-
+# Регистрация модели CustomUser в админке
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.unregister(Group)
+

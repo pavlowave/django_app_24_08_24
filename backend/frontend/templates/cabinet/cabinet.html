@@ -5,71 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
     <style>
+        /* Ваши стили */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
         }
         .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: 0 auto;
         }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .email {
-            font-size: 18px;
-            color: #555;
-            margin-top: 20px;
-            text-align: center;
-        }
-        .logout-button {
-            display: block;
+        table {
             width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
-        .logout-button:hover {
-            background-color: #e84118;
+        table, th, td {
+            border: 1px solid black;
         }
-        .nav-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 30px;
+        th, td {
+            padding: 8px;
+            text-align: left;
         }
         .nav-buttons a {
-            display: block;
-            padding: 12px;
-            background-color: #3498db;
-            color: white;
-            text-align: center;
+            margin-right: 10px;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .pagination a {
+            margin-right: 5px;
             text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .nav-buttons a:hover {
-            background-color: #2980b9;
-        }
-        .admin-controls {
-            margin-top: 30px;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
         }
     </style>
 </head>
@@ -80,15 +44,13 @@
             <p>Ваш адрес электронной почты: <strong>{{ email }}</strong></p>
         </div>
 
-        <!-- Форма для выхода из системы -->
         <form action="{% url 'logout' %}" method="get">
             {% csrf_token %}
-            <button type="submit" class="logout-button">Выйти</button>
+            <button type="submit">Выйти</button>
         </form>
 
-        <!-- Кнопки навигации -->
         <div class="nav-buttons">
-            <a href="{% url 'cabinet' %}">Главная</a>
+            <a href="{% url 'cabinet' user_id=user_id %}">Главная</a>
             <a href="#">Бар</a>
             <a href="#">Тренеры</a>
             <a href="#">Групповые</a>
@@ -96,14 +58,97 @@
             <a href="#">Оплата</a>
         </div>
 
-        {% if is_admin %}
-        <div class="admin-controls">
-            <h2>Управление ролями</h2>
-            <p>Как администратор, вы можете назначать роли другим пользователям.</p>
-            <a href="{% url 'assign_role' %}" class="nav-buttons">Назначить роль</a>
-            <a href="{% url 'view_users' %}" class="nav-buttons">Просмотреть пользователей</a>
-        </div>
+        {% if user.role == 'manager' %}
+            <h2>Вы управляющий</h2>
+            <p>Вы можете назначать любые роли</p>
+            <h2>Управление пользователями</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Текущая роль</th>
+                        <th>Новая роль</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                <form method="post" action="{% url 'cabinet' user_id=user.id %}">
+                                    {% csrf_token %}
+                                    <select name="role" required>
+                                        {% for role in roles_to_assign %}
+                                            <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <button type="submit">Назначить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% elif user.role == 'admin' %}
+            <h2>Вы администратор</h2>
+            <p>Вы можете назначать роли:</p>
+            <h2>Управление пользователями</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Текущая роль</th>
+                        <th>Новая роль</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                <form method="post" action="{% url 'cabinet' user_id=user.id %}">
+                                    {% csrf_token %}
+                                    <select name="role" required>
+                                        {% for role in roles_to_assign %}
+                                            <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <button type="submit">Назначить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% elif user.role == 'masseur' %}
+            <h2>Вы массажист</h2>
+            <p>У вас нет прав для назначения ролей.</p>
+        {% elif user.role == 'trainer' %}
+            <h2>Вы тренер</h2>
+            <p>У вас нет прав для назначения ролей.</p>
+        {% elif user.role == 'visitor' %}
+            <h2>Вы обычный пользователь</h2>
+            <p>У вас нет прав для назначения ролей.</p>
         {% endif %}
+
+        <!-- Пагинация -->
+        <div class="pagination">
+            {% if users.has_previous %}
+                <a href="?page={{ users.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+            <span>Страница {{ users.number }} из {{ users.paginator.num_pages }}</span>
+            {% if users.has_next %}
+                <a href="?page={{ users.next_page_number }}">Следующая</a>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>

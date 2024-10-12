@@ -5,7 +5,7 @@ import secrets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from .serializers import LoginSerializer, RegistrationSerializer
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login
@@ -21,6 +21,7 @@ from django.views import View
 
 User = get_user_model()
 
+
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -29,24 +30,22 @@ class LoginAPIView(APIView):
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
-        if request.user.is_authenticated:
-            email = request.user.email
-        else:
-            email = None
+
+        # Проверка валидности данных
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            login(request, user)  # Вход пользователя
-            return redirect(reverse('cabinet') + f'?email={email}')
+
+            # Вход пользователя
+            login(request, user)
+
+            # Получение ID пользователя после успешного входа
+            user_id = user.id
+
+            # Редирект на личный кабинет с передачей ID пользователя в URL
+            return redirect(reverse('cabinet', kwargs={'user_id': user_id}))
+
+        # Если данные невалидны, возвращаем ошибки
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class CabinetAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request, *args, **kwargs):
-        email = request.user.email if request.user.is_authenticated else None
-        is_admin = request.user.role == 'admin'  # Проверка на роль админа
-
-        return render(request, 'cabinet/cabinet.html', {'email': email, 'is_admin': is_admin})
 
 
 class RegistrationAPIView(APIView):
@@ -58,8 +57,10 @@ class RegistrationAPIView(APIView):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
+
+
             # Проверка существования пользователя с активным email
-            if User.objects.filter(email=email, is_active=True).exists():
+            if User.objects.filter(email=email).exists():
                 return Response({'email': 'Данный Email уже используется.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Проверка на частоту отправки email
@@ -71,7 +72,10 @@ class RegistrationAPIView(APIView):
                 return Response({'email': 'Вы можете запрашивать электронное письмо только один раз в минуту.'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            user = serializer.save()  # Создаем пользователя
+            # Создаем временного пользователя
+            user = User(email=email, is_active=False)  # Устанавливаем is_active в False
+            user.set_password(None)  # Пароль пока не устанавливаем
+            user.save()  # Сохраняем временного пользователя в БД
 
             # Генерируем код подтверждения
             digits = string.digits
@@ -100,12 +104,12 @@ class ConfirmRegistrationAPIView(APIView):
         email = request.GET.get('email')
         return render(request, 'registration/confirm_registration.html', {'email': email})
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         code = request.data.get('code')
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email=email)  # Получаем пользователя
         except User.DoesNotExist:
             return Response({'detail': 'Пользователь не найден.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -113,14 +117,14 @@ class ConfirmRegistrationAPIView(APIView):
             user.is_active = True
             user.save(update_fields=["is_active"])
             login(request, user)
-            return redirect(reverse('cabinet'))
+            return redirect(reverse('cabinet', args=[user.id]))
 
         return Response({'detail': 'Неверный код подтверждения.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 class WebPasswordResetAPIView(PasswordResetView):
     template_name = 'reset_password/password_reset_email.html'
-
 
 
 class LogoutView(View):
