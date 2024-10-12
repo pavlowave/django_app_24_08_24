@@ -16,48 +16,52 @@ User = get_user_model()
 class CabinetAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        user_email = request.user.email
-        user_id = request.user.id
-        user = request.user
-        roles_to_assign = []
-
-        # Логика для получения списка пользователей
+    def get_user_list(self, user):
+        """ Возвращает список пользователей в зависимости от роли текущего пользователя. """
         if user.is_superuser:
-            users_list = User.objects.all()  # Суперадминистратор видит всех в админке
+            return User.objects.all()
         elif user.role == 'manager':
-            users_list = User.objects.exclude(is_superuser=True).exclude(role='manager')  # Менеджер видит всех, кроме суперадминистраторов
+            return User.objects.exclude(is_superuser=True).exclude(role='manager')
         elif user.role == 'admin':
-            users_list = User.objects.exclude(is_superuser=True).exclude(role__in=['manager', 'admin'])  # Админ видит всех, кроме суперадминистраторов и менеджеров
+            return User.objects.exclude(is_superuser=True).exclude(role__in=['manager', 'admin'])
+        return User.objects.filter(id=user.id)
 
-        else:
-            users_list = User.objects.filter(id=user_id)  # Остальные видят только себя
+    def get_roles_to_assign(self, user):
+        """ Возвращает роли, доступные для назначения в зависимости от роли текущего пользователя. """
+        if user.role == 'admin':
+            return ['visitor', 'trainer', 'masseur']
+        elif user.role == 'manager':
+            return ['visitor', 'trainer', 'masseur', 'admin']
+        return []
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        user_email = user.email
+        user_id = user.id
+
+        # Получаем список пользователей и роли для назначения
+        users_list = self.get_user_list(user)
+        roles_to_assign = self.get_roles_to_assign(user)
 
         # Пагинация
-        page = request.GET.get('page', 1)  # Получаем номер страницы из GET-запроса
-        paginator = Paginator(users_list, 25)  # 25 пользователей на странице
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(users_list, 25)
 
         try:
-            users = paginator.page(page)
+            users = paginator.page(page_number)
         except PageNotAnInteger:
-            users = paginator.page(1)  # Если не целое число, возвращаем первую страницу
+            users = paginator.page(1)
         except EmptyPage:
-            users = paginator.page(paginator.num_pages)  # Если страница больше последней, возвращаем последнюю
+            users = paginator.page(paginator.num_pages)
 
-        # Проверка роли и добавление доступных для назначения ролей
-        if user.role == 'admin':
-            roles_to_assign = ['visitor', 'trainer', 'masseur']
-        elif user.role == 'manager':
-            roles_to_assign = ['visitor', 'trainer', 'masseur', 'admin']
-
-        # Объединение всех данных в один контекст
+        # Формируем контекст
         context = {
             'email': user_email,
             'roles_to_assign': roles_to_assign,
             'user_id': user_id,
             'user': user,
-            'users': users,  # Список пользователей для отображения на странице
-            'paginator': paginator  # Передаем пагинатор для создания навигации
+            'users': users,
+            'paginator': paginator
         }
         return render(request, 'cabinet/cabinet.html', context)
 
@@ -71,10 +75,11 @@ class CabinetAPIView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'Пользователь не найден.'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Изменение роли целевого пользователя
+        # Изменение роли
         target_user.role = new_role
         target_user.save()
         return Response({'message': f'Роль пользователя {target_user.email} обновлена на {new_role}.'}, status=status.HTTP_200_OK)
+
 
 
 class LogoutView(View):
