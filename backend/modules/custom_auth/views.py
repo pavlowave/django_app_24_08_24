@@ -42,7 +42,7 @@ class LoginAPIView(APIView):
             user_id = user.id
 
             # Редирект на личный кабинет с передачей ID пользователя в URL
-            return redirect(reverse('cabinet', kwargs={'user_id': user_id}))
+            return redirect(reverse('cabinet'))
 
         # Если данные невалидны, возвращаем ошибки
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -117,7 +117,7 @@ class ConfirmRegistrationAPIView(APIView):
             user.is_active = True
             user.save(update_fields=["is_active"])
             login(request, user)
-            return redirect(reverse('cabinet', args=[user.id]))
+            return redirect(reverse('cabinet'))
 
         return Response({'detail': 'Неверный код подтверждения.'}, status=status.HTTP_400_BAD_REQUEST)
 

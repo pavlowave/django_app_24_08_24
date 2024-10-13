@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список тренеров</title>
+</head>
+<body>
+    <h1>Тренеры фитнес клуба:</h1>
+    <ul>
+        {% for coach in coaches %}
+            <li>
+                <a href="{% url 'сoach_detail' coach.id %}">{{ coach.username }} - {{ coach.email }}</a>  <!-- Ссылка на личную страницу тренера -->
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Кнопка "Назад" -->
+    <a href="{% url 'cabinet' %}">Назад</a>
+</body>
+</html>

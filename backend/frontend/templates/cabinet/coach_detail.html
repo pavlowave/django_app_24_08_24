@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личная страница тренера: {{ coach.email }}</title>
+</head>
+<body>
+    <h1>Личная страница тренера: {{ coach.email }}</h1>
+    <p>Email: {{ coach.email }}</p>
+    
+    <a href="{% url 'coaches' %}">Назад к списку тренеров</a>  <!-- Кнопка назад -->
+</body>
+</html>

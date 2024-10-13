@@ -50,9 +50,9 @@
         </form>
 
         <div class="nav-buttons">
-            <a href="{% url 'cabinet' user_id=user_id %}">Главная</a>
+            <a href="{% url 'cabinet' %}">Главная</a>
             <a href="#">Бар</a>
-            <a href="#">Тренеры</a>
+            <a href="{% url 'coaches' %}">Тренеры</a>
             <a href="#">Групповые</a>
             <a href="#">Массаж</a>
             <a href="#">Оплата</a>
@@ -77,14 +77,14 @@
                             <td>{{ user.email }}</td>
                             <td>{{ user.role }}</td>
                             <td>
-                                <form method="post" action="{% url 'cabinet' user_id=user.id %}">
+                                <form method="post" action="{% url 'cabinet' %}">
                                     {% csrf_token %}
+                                    <input type="hidden" name="email" value="{{ user.email }}">  <!-- Скрытое поле для email -->
                                     <select name="role" required>
                                         {% for role in roles_to_assign %}
                                             <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
                                         {% endfor %}
                                     </select>
-                                    <input type="hidden" name="user_id" value="{{ user.id }}">
                                     <button type="submit">Назначить</button>
                                 </form>
                             </td>
@@ -112,14 +112,14 @@
                             <td>{{ user.email }}</td>
                             <td>{{ user.role }}</td>
                             <td>
-                                <form method="post" action="{% url 'cabinet' user_id=user.id %}">
+                                <form method="post" action="{% url 'cabinet' %}">
                                     {% csrf_token %}
+                                    <input type="hidden" name="email" value="{{ user.email }}">  <!-- Скрытое поле для email -->
                                     <select name="role" required>
                                         {% for role in roles_to_assign %}
                                             <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
                                         {% endfor %}
                                     </select>
-                                    <input type="hidden" name="user_id" value="{{ user.id }}">
                                     <button type="submit">Назначить</button>
                                 </form>
                             </td>

@@ -1,17 +1,15 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.views import View
-from django.http import HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 User = get_user_model()
-
 
 class CabinetAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -37,7 +35,6 @@ class CabinetAPIView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         user_email = user.email
-        user_id = user.id
 
         # Получаем список пользователей и роли для назначения
         users_list = self.get_user_list(user)
@@ -54,11 +51,10 @@ class CabinetAPIView(APIView):
         except EmptyPage:
             users = paginator.page(paginator.num_pages)
 
-        # Формируем контекст
+        # Контекст
         context = {
             'email': user_email,
             'roles_to_assign': roles_to_assign,
-            'user_id': user_id,
             'user': user,
             'users': users,
             'paginator': paginator
@@ -67,21 +63,31 @@ class CabinetAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        target_user_id = request.data.get('user_id')
         new_role = request.data.get('role')
+        target_user_email = request.data.get('email')
 
-        try:
-            target_user = User.objects.get(id=target_user_id)
-        except User.DoesNotExist:
-            return Response({'error': 'Пользователь не найден.'}, status=status.HTTP_404_NOT_FOUND)
+         # Проверка на наличие данных
+        if not target_user_email or not new_role:
+            return Response({'error': 'Email пользователя и новая роль обязательны.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Изменение роли
-        target_user.role = new_role
-        target_user.save()
-        return Response({'message': f'Роль пользователя {target_user.email} обновлена на {new_role}.'}, status=status.HTTP_200_OK)
+        # Изменение роли для текущего пользователя
+        if user.role in ['admin', 'manager']:
+            try:
+                target_user = User.objects.get(email=target_user_email)
+            except User.DoesNotExist:
+                return Response({'error': 'Пользователь не найден.'}, status=status.HTTP_404_NOT_FOUND)
 
+            # Проверка на допустимость новой роли
+            valid_roles = self.get_roles_to_assign(user)  # Получаем доступные роли
+            if new_role not in valid_roles:
+                return Response({'error': f'Недопустимая роль. Доступные роли: {valid_roles}.'}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Изменение роли
+            target_user.role = new_role
+            target_user.save()
+            return Response({'message': f'Роль пользователя {target_user.email} обновлена на {new_role}.'}, status=status.HTTP_200_OK)
 
+        return Response({'error': 'У вас нет прав для изменения ролей.'}, status=status.HTTP_403_FORBIDDEN)
 class LogoutView(View):
     def get(self, request):
         user = request.user

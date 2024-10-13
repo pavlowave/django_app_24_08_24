@@ -56,7 +56,6 @@ class CustomUserAdmin(BaseUserAdmin):
             'fields': ('email', 'password1', 'password2', 'role', 'is_active', 'is_staff', 'groups')}
         ),
     )
-
-# Регистрация модели CustomUser в админке
+    
+admin.site.unregister(Group)
 admin.site.register(CustomUser, CustomUserAdmin)
-

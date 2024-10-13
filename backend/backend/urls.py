@@ -25,4 +25,5 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/v1/', include('modules.custom_auth.urls')),
     path('api/v1/', include('modules.cabinet.urls')),
+    path('api/v1/cabinet/', include('modules.coaches.urls')),
 ]+ debug_toolbar_urls()
