@@ -8,7 +8,7 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 # Настройка Swagger
 schema_view = get_schema_view(
     openapi.Info(
-        title="Custom API",
+        title="Fitness API",
         default_version='v1',
         description="Documentation `ReDoc` view can be found [here](/redoc).",
         contact=openapi.Contact(email="pavlosidorov@mail.ru"),
@@ -23,6 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('', include('social_django.urls', namespace='social')),
+    path('complete/', include('social_django.urls', namespace='social')),
     path('api/v1/', include('modules.custom_auth.urls')),
     path('api/v1/', include('modules.cabinet.urls')),
     path('api/v1/cabinet/', include('modules.coaches.urls')),

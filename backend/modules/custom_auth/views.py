@@ -49,6 +49,7 @@ class LoginAPIView(APIView):
 
 
 class RegistrationAPIView(APIView):
+    permission_classes = [AllowAny]
 
     def get(self, request):
         return render(request, 'registration/registration.html', {'user': request.user})
@@ -99,7 +100,8 @@ class RegistrationAPIView(APIView):
 
 
 class ConfirmRegistrationAPIView(APIView):
-
+    permission_classes = [AllowAny]
+    
     def get(self, request):
         email = request.GET.get('email')
         return render(request, 'registration/confirm_registration.html', {'email': email})
@@ -122,16 +124,5 @@ class ConfirmRegistrationAPIView(APIView):
         return Response({'detail': 'Неверный код подтверждения.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class WebPasswordResetAPIView(PasswordResetView):
     template_name = 'reset_password/password_reset_email.html'
-
-
-class LogoutView(View):
-    def get(self, request):
-        user = request.user
-        if user.is_authenticated:
-            # Завершаем сессию пользователя
-            logout(request)
-        # Перенаправляем пользователя на главную страницу или другую страницу после выхода
-        return HttpResponseRedirect('/')

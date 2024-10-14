@@ -88,6 +88,8 @@ class CabinetAPIView(APIView):
             return Response({'message': f'Роль пользователя {target_user.email} обновлена на {new_role}.'}, status=status.HTTP_200_OK)
 
         return Response({'error': 'У вас нет прав для изменения ролей.'}, status=status.HTTP_403_FORBIDDEN)
+
+
 class LogoutView(View):
     def get(self, request):
         user = request.user

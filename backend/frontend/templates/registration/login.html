@@ -67,6 +67,41 @@
             text-align: center;
             margin-top: 10px;
         }
+        .social-login-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: block;
+            text-align: center;
+        }
+        .social-login-btn i {
+            margin-right: 5px;
+        }
+        .btn-github {
+            background-color: #333;
+        }
+        .btn-github:hover {
+            background-color: #24292e;
+        }
+        .btn-mailru {
+            background-color: #ff6600;
+        }
+        .btn-mailru:hover {
+            background-color: #ff5500;
+        }
+        .btn-yandex {
+            background-color: #ffcc00;
+        }
+        .btn-yandex:hover {
+            background-color: #e6b800;
+        }
+        .social-buttons {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +122,19 @@
         <button type="submit" class="login-btn">Login</button>
     </form>
     <a href="{% url 'registration' %}" class="register-link">Don't have an account? Register here</a>
+
+    <!-- кнопки для аутентификации -->
+    <div class="social-buttons">
+        <a class="social-login-btn btn-yandex" href="{% url 'social:begin' 'yandex-oauth2' %}">
+            <i class="fab fa-yandex"></i> Sign in with Yandex
+        </a>
+        <a class="social-login-btn btn-mailru" href="{% url 'social:begin' 'mailru' %}">
+            <i class="fab fa-mail.ru"></i> Sign in with Mail.ru
+        </a>
+        <a class="social-login-btn btn-github" href="{% url 'social:begin' 'github' %}">
+            <i class="fab fa-github"></i> Sign in with GitHub
+        </a>
+    </div>
 </div>
 
 </body>
