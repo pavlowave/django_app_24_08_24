@@ -16,7 +16,7 @@ class CoachesAPIView(APIView):
 
     def get(self, request):
         coaches = self.get_coach_list()
-        return render(request, 'cabinet/coaches.html', {'coaches': coaches})
+        return render(request, 'cabinet/coaches/coaches.html', {'coaches': coaches})
 
 
 class CoachDetailView(APIView):
@@ -24,4 +24,4 @@ class CoachDetailView(APIView):
 
     def get(self, request, user_id):
         trainer = get_object_or_404(User, id=user_id)
-        return render(request, 'cabinet/coach_detail.html', {'coach': trainer})
+        return render(request, 'cabinet/coaches/coach_detail.html', {'coach': trainer})

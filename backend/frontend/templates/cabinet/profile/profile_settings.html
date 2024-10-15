@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки профиля</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="file"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .theme-options {
+            margin-bottom: 20px;
+        }
+
+        .theme-options label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Настройки профиля</h1>
+
+        <!-- Блок 1: Настройки темы -->
+        <div class="form-section">
+            <h2>Настройки темы</h2>
+            <form id="themeForm">
+                <label for="theme">Выберите тему:</label>
+                <div class="theme-options">
+                    <input type="radio" id="lightTheme" name="theme" value="light" checked>
+                    <label for="lightTheme">Светлая</label>
+
+                    <input type="radio" id="darkTheme" name="theme" value="dark">
+                    <label for="darkTheme">Темная</label>
+                </div>
+                <button type="button" onclick="saveTheme()">Сохранить</button>
+            </form>
+        </div>
+
+        <!-- Блок 2: Настройки профиля -->
+        <div class="form-section">
+            <h2>Настройки профиля</h2>
+            <form id="profileForm" enctype="multipart/form-data">
+                <label for="price">Стоимость (в рублях):</label>
+                <input type="text" id="price" name="price" placeholder="Введите стоимость">
+
+                <label for="description">Описание профиля:</label>
+                <textarea id="description" name="description" rows="4" placeholder="Введите описание"></textarea>
+
+                <label for="photo1">Фото 1:</label>
+                <input type="file" id="photo1" name="photo1" accept="image/*">
+
+                <label for="photo2">Фото 2:</label>
+                <input type="file" id="photo2" name="photo2" accept="image/*">
+
+                <label for="photo3">Фото 3:</label>
+                <input type="file" id="photo3" name="photo3" accept="image/*">
+
+                <label for="photo4">Фото 4:</label>
+                <input type="file" id="photo4" name="photo4" accept="image/*">
+
+                <button type="button" onclick="saveProfile()">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function saveTheme() {
+            const theme = document.querySelector('input[name="theme"]:checked').value;
+            alert("Вы выбрали тему: " + theme);
+            // Здесь можно добавить код для сохранения выбранной темы на сервере
+        }
+
+        function saveProfile() {
+            const price = document.getElementById('price').value;
+            const description = document.getElementById('description').value;
+            const photo1 = document.getElementById('photo1').files[0];
+            const photo2 = document.getElementById('photo2').files[0];
+            const photo3 = document.getElementById('photo3').files[0];
+            const photo4 = document.getElementById('photo4').files[0];
+
+            alert("Настройки профиля сохранены!\nСтоимость: " + price + "\nОписание: " + description);
+            // Здесь можно добавить код для отправки данных на сервер
+        }
+    </script>
+</body>
+</html>

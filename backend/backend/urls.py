@@ -27,5 +27,6 @@ urlpatterns = [
     path('complete/', include('social_django.urls', namespace='social')),
     path('api/v1/', include('modules.custom_auth.urls')),
     path('api/v1/', include('modules.cabinet.urls')),
-    path('api/v1/cabinet/', include('modules.coaches.urls')),
+    path('api/v1/cabinet/', include('modules.cabinet.coaches.urls')),
+    path('api/v1/cabinet/', include('modules.cabinet.profile_settings.urls')),
 ]+ debug_toolbar_urls()

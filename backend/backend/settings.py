@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     #admin
     'modules.cabinet.apps.CabinetConfig',
     #coaches
-    'modules.coaches.apps.CoachesConfig',
+    'modules.cabinet.coaches.apps.CoachesConfig',
+    #profile_settings
+    'modules.cabinet.profile_settings.apps.ProfileSettingsConfig',
 
 ]
 
