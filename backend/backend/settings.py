@@ -14,7 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://75d6-91-210-24-156.ngrok-free.app',
+    'https://19ac-91-210-24-156.ngrok-free.app',
 ]
 
 # Application definition
@@ -127,7 +127,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'frontend/static',),
 ]

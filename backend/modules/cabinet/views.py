@@ -8,6 +8,7 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .serializers import UserSerializer
 
 User = get_user_model()
 
@@ -34,9 +35,6 @@ class CabinetAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        user_email = user.email
-
-        # Получаем список пользователей и роли для назначения
         users_list = self.get_user_list(user)
         roles_to_assign = self.get_roles_to_assign(user)
 
@@ -51,15 +49,19 @@ class CabinetAPIView(APIView):
         except EmptyPage:
             users = paginator.page(paginator.num_pages)
 
-        # Контекст
+        # Сериализация данных пользователей
+        user_data = UserSerializer(users, many=True).data
+
+        # Ответ в формате JSON
         context = {
-            'email': user_email,
+            'current_user': UserSerializer(user).data,  # Информация о текущем пользователе
+            'users': user_data,  # Информация о всех пользователях (с учетом роли)
+            'page': page_number,
             'roles_to_assign': roles_to_assign,
-            'user': user,
-            'users': users,
-            'paginator': paginator
+            'total_pages': paginator.num_pages,
         }
         return render(request, 'cabinet/cabinet.html', context)
+
 
     def post(self, request, *args, **kwargs):
         user = request.user

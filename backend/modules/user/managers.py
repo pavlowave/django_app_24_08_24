@@ -17,6 +17,9 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
 
+        if not user.photo and 'oauth2' in extra_fields.get('auth_provider', ''):
+            user.photo = 'photos/default_oauth_user.png'
+
         if password:
             user.set_password(password)
         else:

@@ -11,12 +11,55 @@
 <body>
     <div class="container">
         <h2>Регистрация</h2>
-        <form action="/api/v1/registration/" method="POST">
+        <form action="/api/v1/registration/" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
             </div>
+
+            <div class="form-group">
+                <label for="first_name">Имя:</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Фамилия:</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="birth_date">Дата рождения:</label>
+                <input type="date" id="birth_date" name="birth_date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Пол:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male">Мужской</option>
+                    <option value="female">Женский</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="club">Выбор клуба:</label>
+                <select id="club" name="club" required>
+                    <option value="club1">Клуб 1</option>
+                    <option value="club2">Клуб 2</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="photo">Фото:</label>
+                <input type="file" id="photo" name="photo" accept="image/*" required>
+            </div>
+
             <button type="submit">Зарегистрироваться</button>
         </form>
     </div>

@@ -8,13 +8,12 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from .serializers import LoginSerializer, RegistrationSerializer
 from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, get_backends, logout
 from django.contrib.auth.views import PasswordResetView
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
-from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.views import View
 
@@ -58,6 +57,13 @@ class RegistrationAPIView(APIView):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
+            first_name = serializer.validated_data['first_name']
+            last_name = serializer.validated_data['last_name']
+            birth_date = serializer.validated_data['birth_date']
+            phone = serializer.validated_data['phone']
+            gender = serializer.validated_data['gender']
+            club = serializer.validated_data['club']
+            photo = serializer.validated_data['photo']
 
 
             # Проверка существования пользователя с активным email
@@ -74,7 +80,17 @@ class RegistrationAPIView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
             # Создаем временного пользователя
-            user = User(email=email, is_active=False)  # Устанавливаем is_active в False
+            user = User(
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                birth_date=birth_date,
+                phone=phone,
+                gender=gender,
+                club=club,
+                photo=photo,
+                is_active=False  # Устанавливаем is_active в False до подтверждения
+            )
             user.set_password(None)  # Пароль пока не устанавливаем
             user.save()  # Сохраняем временного пользователя в БД
 
@@ -101,7 +117,7 @@ class RegistrationAPIView(APIView):
 
 class ConfirmRegistrationAPIView(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request):
         email = request.GET.get('email')
         return render(request, 'registration/confirm_registration.html', {'email': email})
@@ -118,7 +134,13 @@ class ConfirmRegistrationAPIView(APIView):
         if user.check_password(code):
             user.is_active = True
             user.save(update_fields=["is_active"])
-            login(request, user)
+            # Получаем первый бекенд аутентификации
+            backend = get_backends()[0]
+            user.backend = f'{backend.__module__}.{backend.__class__.__name__}'
+
+            # Входим в систему с указанием бекенда
+            login(request, user, backend=user.backend)
+
             return redirect(reverse('cabinet'))
 
         return Response({'detail': 'Неверный код подтверждения.'}, status=status.HTTP_400_BAD_REQUEST)

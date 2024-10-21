@@ -31,13 +31,36 @@ class LoginSerializer(serializers.Serializer):
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'first_name', 'last_name', 'birth_date', 'phone', 'gender', 'club', 'photo']
+
+    def validate_photo(self, value):
+        if not value:
+            raise serializers.ValidationError("Фото обязательно для регистрации.")
+        return value
 
     def create(self, validated_data):
-        email = validated_data['email']
+        email = validated_data.get('email')
+        first_name = validated_data.get('first_name')
+        last_name = validated_data.get('last_name')
+        birth_date = validated_data.get('birth_date')
+        phone = validated_data.get('phone')
+        gender = validated_data.get('gender')
+        club = validated_data.get('club')
+        photo = validated_data.get('photo')
 
-        # Создаем пользователя с временным паролем
-        user = User.objects.create_user(email=email, password=None)  # Пароль не устанавливается сразу
-        user.is_active = False  # Пользователь неактивен до подтверждения
+        # Создаем пользователя с неиспользуемым паролем (для последующей соц. аутентификации)
+        user = User.objects.create_user(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            birth_date=birth_date,
+            phone=phone,
+            gender=gender,
+            club=club,
+            photo=photo,
+            password=None  # Пароль не устанавливается, пока не будет подтвержден
+        )
+        user.is_active = False  # Пользователь не активен до подтверждения
         user.save()
+
         return user
