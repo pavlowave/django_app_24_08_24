@@ -1,0 +1,141 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7; /* Цвет фона страницы */
+    margin: 0;
+    padding: 20px; /* Внутренние отступы для тела */
+}
+
+/* Стили для заголовков */
+h1 {
+    font-size: 28px;
+    color: #333; /* Темный цвет для заголовка */
+    text-align: center; /* Центрирование текста */
+}
+
+h2 {
+    font-size: 24px;
+    color: #4CAF50; /* Цвет заголовка, указывающий на успех */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+/* Стили для параграфов */
+p {
+    font-size: 16px;
+    color: #666; /* Серый цвет для текста */
+    margin: 10px 0; /* Отступы сверху и снизу */
+}
+
+/* Стили для кнопок навигации */
+.nav-buttons {
+    display: flex;                     /* Используем flexbox для выравнивания */
+    justify-content: flex-start;      /* Выравнивание кнопок по левому краю */
+    margin: 20px 0;                   /* Отступы сверху и снизу */
+}
+
+.nav-buttons a {
+    text-decoration: none;             /* Убрать подчеркивание */
+    padding: 10px 15px;               /* Внутренние отступы */
+    background-color: #4CAF50;        /* Цвет фона кнопок */
+    color: white;                     /* Цвет текста */
+    border-radius: 5px;               /* Закругленные углы */
+    transition: background-color 0.3s; /* Плавный переход */
+    margin-right: 10px;               /* Отступ справа для кнопок */
+}
+
+.nav-buttons a:last-child {
+    margin-right: 0;                  /* Убираем отступ у последней кнопки */
+}
+
+.nav-buttons a:hover {
+    background-color: #45a049;        /* Цвет при наведении */
+}
+
+
+/* Стили для выпадающего меню профиля */
+.profile-container {
+    position: fixed; /* Фиксированное позиционирование */
+    top: 20px; /* Отступ сверху */
+    right: 20px; /* Отступ справа */
+    z-index: 1000; /* Обеспечиваем, что меню будет сверху других элементов */
+}
+
+.profile-icon {
+    font-size: 24px; /* Размер иконки */
+    color: #4CAF50; /* Цвет иконки */
+    cursor: pointer; /* Указатель при наведении */
+}
+
+.profile-dropdown {
+    display: none; /* Скрываем меню по умолчанию */
+    position: absolute; /* Абсолютное позиционирование */
+    background-color: #fff; /* Белый фон */
+    border: 1px solid #ccc; /* Граница */
+    z-index: 1; /* На переднем плане */
+    min-width: 150px; /* Минимальная ширина выпадающего меню */
+    right: 0; /* Выравнивание по правому краю */
+}
+
+.profile-dropdown a {
+    display: block; /* Блоковый элемент */
+    padding: 10px; /* Внутренние отступы */
+    text-decoration: none; /* Убрать подчеркивание */
+    color: #333; /* Цвет текста */
+}
+
+.profile-dropdown a:hover {
+    background-color: #f1f1f1; /* Цвет при наведении */
+}
+
+
+/* Стили для таблицы управления пользователями */
+table {
+    width: 100%; /* Ширина таблицы на 100% */
+    border-collapse: collapse; /* Убираем двойные границы */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+th, td {
+    padding: 10px; /* Внутренние отступы ячеек */
+    text-align: left; /* Выровнять текст по левому краю */
+    border-bottom: 1px solid #ddd; /* Нижняя граница для ячеек */
+}
+
+th {
+    background-color: #f2f2f2; /* Цвет фона заголовков */
+}
+
+/* Стили для пагинации */
+.pagination {
+    margin: 20px 0; /* Отступы сверху и снизу */
+    text-align: center; /* Центрирование текста */
+}
+
+.pagination a {
+    text-decoration: none; /* Убрать подчеркивание */
+    margin: 0 5px; /* Отступы по бокам */
+    color: #4CAF50; /* Цвет ссылок */
+}
+
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 24px; /* Уменьшаем размер заголовка */
+    }
+
+    h2 {
+        font-size: 20px; /* Уменьшаем размер заголовка */
+    }
+
+    p {
+        font-size: 14px; /* Уменьшаем размер текста */
+    }
+
+    .nav-buttons {
+        flex-direction: column; /* Переключаем кнопки на вертикальное выравнивание */
+        align-items: center; /* Центрирование кнопок */
+    }
+
+    .nav-buttons a {
+        margin-bottom: 10px; /* Отступ между кнопками */
+    }
+}

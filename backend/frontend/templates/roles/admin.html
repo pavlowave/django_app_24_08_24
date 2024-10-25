@@ -1,0 +1,187 @@
+<h2>Вы администратор</h2>
+<p>Вы можете запускать людей в зал и отслеживать количество людей.</p>
+
+<!-- Сканирование QR-кода для входа в зал -->
+<h3>Сканировать человека для входа в зал:</h3>
+<form method="post" action="{% url 'scan_user' %}" id="qr-form">
+    {% csrf_token %}
+    <label for="qr_code">Запустить человекf в зал по Email:</label>
+    <input type="text" id="qr_code" name="qr_code" required>
+    <button type="submit">Запустить в зал</button>
+</form>
+
+<!-- Контейнер для отображения видео с камеры -->
+<div id="interactive" style="width: 200px; height: 200px; border: 1px solid black;"></div>
+
+<!-- Кнопка для запуска сканирования через камеру -->
+<button id="start-scan">Сканировать QR-код через камеру</button>
+
+<!-- Отображение общего количества людей в зале -->
+<h3>Сейчас в зале:</h3>
+<p><strong>{{ people_in_gym }}</strong> человек(а)</p>
+
+<!-- Управление пользователями и ролями -->
+<h2>Управление пользователями</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Текущая роль</th>
+            <th>Новая роль</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <form method="post" action="{% url 'cabinet' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="email" value="{{ user.email }}"> <!-- Скрытое поле для email -->
+                        <select name="role" required>
+                            {% for role in roles_to_assign %}
+                                <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Назначить</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- JavaScript для инициализации сканирования -->
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
+    <script>
+        document.getElementById("start-scan").addEventListener("click", function() {
+            const quaggaConf = {
+                inputStream: {
+                    target: document.querySelector("#interactive"),
+                    type: "LiveStream",
+                    constraints: {
+                        width: { min: 640 },
+                        height: { min: 480 },
+                        facingMode: "environment",
+                        aspectRatio: { min: 1, max: 2 }
+                    }
+                },
+                decoder: {
+                    readers: [
+                    'qr_code',
+                    'code_128_reader',
+                    'ean_reader',
+                    'upc_reader',
+                    'code_39_reader',
+                    'code_93_reader',
+                    'itf_reader',
+                    'codabar_reader',
+                    // Добавьте другие декодеры по желанию
+                ]
+                },
+            };
+
+            Quagga.init(quaggaConf, function (err) {
+                if (err) {
+                    console.log(err);
+                    alert('Ошибка инициализации: ' + err.message);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function (data) {
+                const qrCode = data.codeResult.code;
+
+                // Автоматическая отправка QR-кода на сервер
+                fetch("{% url 'scan_user' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({ "qr_code": qrCode })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => console.error('Ошибка:', error));
+
+                Quagga.stop(); // Останавливаем сканирование после успешного считывания
+            });
+        });
+    </script>
+</body>
+</html> {% endcomment %}
+
+<body>
+    document.getElementById("start-scan").addEventListener("click", function() {
+    <div id="reader" style="width: 600px"></div>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #reader {
+            width: 600px;
+        }
+        #result {
+            text-align: center;
+            font-size: 1.5rem;
+        }
+    </style>
+
+    <main>
+        <div id="reader"></div>
+        <div id="result"></div>
+    </main>
+
+
+    <script>
+
+        const scanner = new Html5QrcodeScanner('reader', {
+            // Scanner will be initialized in DOM inside element with id of 'reader'
+            qrbox: {
+                width: 250,
+                height: 250,
+            },  // Sets dimensions of scanning box (set relative to reader element width)
+            fps: 20, // Frames per second to attempt a scan
+        });
+
+
+        scanner.render(success, error);
+        // Starts scanner
+
+        function success(result) {
+
+            document.getElementById('result').innerHTML = `
+            <h2>Success!</h2>
+            <p><a href="${result}">${result}</a></p>
+            `;
+            // Prints result as a link inside result element
+
+            scanner.clear();
+            // Clears scanning instance
+
+            document.getElementById('reader').remove();
+            // Removes reader element from DOM since no longer needed
+
+        }
+
+        function error(err) {
+            console.error(err);
+            // Prints any errors to the console
+        }
+    }
+    </script>
+</body>
+</html>

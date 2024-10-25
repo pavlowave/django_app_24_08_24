@@ -39,7 +39,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
-
+    in_gym = models.BooleanField(default=False)
+    entry_time = models.DateTimeField(null=True, blank=True)
+    
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'

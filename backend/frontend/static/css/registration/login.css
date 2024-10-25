@@ -1,0 +1,145 @@
+/* Основные стили для страницы авторизации */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button.login-btn {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button.login-btn:hover {
+    background-color: #0056b3;
+}
+
+a.forgot-password {
+    display: inline-block; /* Изменяем на inline-block для управления позиционированием */
+    margin-top: 10px;
+    color: #007BFF;
+    text-decoration: none;
+    float: right; /* Сдвигаем вправо */
+}
+
+a.forgot-password:hover,
+a.register-link:hover {
+    text-decoration: underline;
+}
+
+a.register-link {
+    display: block;
+    margin-top: 10px;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a.register-link:hover {
+    text-decoration: underline;
+}
+
+/* Стили для кнопок социальных сетей */
+.social-buttons {
+    margin-top: 20px;
+}
+
+.social-login-btn {
+    display: block;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.social-login-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.social-login-btn i {
+    margin-right: 5px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+
+    button.login-btn {
+        padding: 8px 0;
+        font-size: 14px;
+    }
+
+    .social-login-btn {
+        padding: 8px;
+        font-size: 12px;
+    }
+}

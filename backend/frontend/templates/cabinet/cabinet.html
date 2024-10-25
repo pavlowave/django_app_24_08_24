@@ -1,73 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
+<link rel="stylesheet" href="{% static 'css/cabinet/cabinet.css' %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
-    <style>
-        /* Ваши стили */
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        .nav-buttons a {
-            margin-right: 10px;
-        }
-        .pagination {
-            margin-top: 20px;
-        }
-        .pagination a {
-            margin-right: 5px;
-            text-decoration: none;
-        }
-
-        /* Стили для кнопки профиля */
-        .profile-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: inline-block;
-        }
-        .profile-button {
-            background-color: #f1f1f1;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
-        .profile-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            min-width: 160px;
-            z-index: 1;
-        }
-        .profile-dropdown a {
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            color: black;
-        }
-        .profile-dropdown a:hover {
-            background-color: #f1f1f1;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -79,20 +17,20 @@
             <label for="photo">Фото:</label>
             {% if current_user.photo %}
             <img src="{{ current_user.photo}}" alt="Фото пользователя" style="max-width: 200px; height: auto;">
-
             {% else %}
                 <p>Фото отсутствует</p>
             {% endif %}
         </div>
 
         <div>
-            <label for="qr_code">qr_code:</label>
+            <label for="qr_code">QR-код:</label>
                 {% if current_user.qr_code %}
                     <img src="{{ current_user.qr_code }}" alt="QR-код" style="max-width: 200px; height: auto;">
                 {% else %}
                     <p>QR-код отсутствует</p>
                 {% endif %}
-            </div>
+        </div>
+
         <div class="nav-buttons">
             <a href="{% url 'cabinet' %}">Главная</a>
             <a href="#">Бар</a>
@@ -105,9 +43,9 @@
         <!-- Кнопка профиля -->
         <div class="profile-container">
             <img src="{{ current_user.photo }}" alt="Фото пользователя" class="profile-button" onclick="toggleProfileDropdown()" style="width: 50px; height: 50px; cursor: pointer;">
-            <span onclick="toggleProfileDropdown()" style="cursor: pointer; margin: 0 5px;">▼</span>
+            <span onclick="toggleProfileDropdown()" style="cursor: pointer; margin: 0 5px;"></span>
 
-        <div id="profileDropdown" class="profile-dropdown" style="display: none;">
+            <div id="profileDropdown" class="profile-dropdown" style="display: none;">
                 <a href="{% url 'settings' %}">Настройки</a>
                 <a href="{% url 'logout' %}">Выход</a>
             </div>
@@ -115,84 +53,15 @@
 
         <!-- Условный контент для разных ролей -->
         {% if current_user.role == 'manager' %}
-            <h2>Вы управляющий</h2>
-            <p>Вы можете назначать любые роли</p>
-            <h2>Управление пользователями</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Текущая роль</th>
-                        <th>Новая роль</th>
-                        <th>Действие</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
-                            <td>
-                                <form method="post" action="{% url 'cabinet' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="email" value="{{ user.email }}">  <!-- Скрытое поле для email -->
-                                    <select name="role" required>
-                                        {% for role in roles_to_assign %}
-                                            <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <button type="submit">Назначить</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        {% elif user.role == 'admin' %}
-            <h2>Вы администратор</h2>
-            <p>Вы можете назначать роли:</p>
-            <h2>Управление пользователями</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Текущая роль</th>
-                        <th>Новая роль</th>
-                        <th>Действие</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        <tr>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
-                            <td>
-                                <form method="post" action="{% url 'cabinet' %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="email" value="{{ user.email }}">  <!-- Скрытое поле для email -->
-                                    <select name="role" required>
-                                        {% for role in roles_to_assign %}
-                                            <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <button type="submit">Назначить</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        {% elif user.role == 'masseur' %}
-            <h2>Вы массажист</h2>
-            <p>У вас нет прав для назначения ролей.</p>
-        {% elif user.role == 'trainer' %}
-            <h2>Вы тренер</h2>
-            <p>У вас нет прав для назначения ролей.</p>
-        {% elif user.role == 'visitor' %}
-            <h2>Вы обычный пользователь</h2>
-            <p>У вас нет прав для назначения ролей.</p>
+            {% include 'roles/manager.html' %}
+        {% elif current_user.role == 'admin' %}
+            {% include 'roles/admin.html' %}
+        {% elif current_user.role == 'masseur' %}
+            {% include 'roles/masseur.html' %}
+        {% elif current_user.role == 'trainer' %}
+            {% include 'roles/trainer.html' %}
+        {% elif current_user.role == 'visitor' %}
+            {% include 'roles/visitor.html' %}
         {% endif %}
 
         <!-- Пагинация -->
@@ -213,7 +82,6 @@
             dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
         }
 
-        // Закрыть выпадающее меню, если клик произошел вне его
         window.onclick = function(event) {
             if (!event.target.matches('.profile-button')) {
                 var dropdowns = document.getElementsByClassName("profile-dropdown");
@@ -226,12 +94,13 @@
             }
         }
     </script>
+
     <style>
         .profile-dropdown {
-            position: absolute; /* Позиционирование для выпадающего меню */
-            background-color: white; /* Цвет фона */
-            border: 1px solid #ccc; /* Граница */
-            z-index: 1; /* На переднем плане */
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1;
         }
     </style>
 </body>

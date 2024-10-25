@@ -14,7 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://19ac-91-210-24-156.ngrok-free.app',
+    'https://dbf6-185-15-63-92.ngrok-free.app',
 ]
 
 # Application definition
@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'modules.cabinet.coaches.apps.CoachesConfig',
     #profile_settings
     'modules.cabinet.profile_settings.apps.ProfileSettingsConfig',
+    # admin_staff
+    'modules.cabinet.admin_staff.apps.AdminStaffConfig',
+
 
 ]
 

@@ -29,4 +29,5 @@ urlpatterns = [
     path('api/v1/', include('modules.cabinet.urls')),
     path('api/v1/cabinet/', include('modules.cabinet.coaches.urls')),
     path('api/v1/cabinet/', include('modules.cabinet.profile_settings.urls')),
+    path('api/v1/cabinet/', include('modules.cabinet.admin_staff.urls')),
 ]+ debug_toolbar_urls() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
