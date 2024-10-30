@@ -10,7 +10,16 @@
     <ul>
         {% for coach in coaches %}
             <li>
-                <a href="{% url 'сoach_detail' coach.id %}">{{ coach.username }} - {{ coach.email }}</a>  <!-- Ссылка на личную страницу тренера -->
+                <!-- Проверяем, есть ли фото у тренера, и выводим его. Если нет, используем изображение по умолчанию -->
+                <div>
+                    {% if coach.photo %}
+                    <img src="{{ coach.photo.url }}" alt="Фото {{ coach.username }}" style="width: 50px; height: 50px; border-radius: 50%;">
+                    {% else %}
+                        <div class="default-photo">Нет фото</div>
+                    {% endif %}
+
+                </div>
+                <a href="{% url 'coach_detail' coach.id %}">{{ coach.username }} - {{ coach.email }}</a>
             </li>
         {% endfor %}
     </ul>

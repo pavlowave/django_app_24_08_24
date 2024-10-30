@@ -41,7 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
     in_gym = models.BooleanField(default=False)
     entry_time = models.DateTimeField(null=True, blank=True)
-    
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -88,3 +88,4 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+

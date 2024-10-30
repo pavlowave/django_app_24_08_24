@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Настройки профиля</title>
     <style>
+        /* Общие стили */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -19,6 +21,7 @@
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            transition: background-color 0.3s;
         }
 
         h2 {
@@ -26,22 +29,19 @@
             margin-bottom: 10px;
         }
 
-        .form-section {
-            margin-bottom: 30px;
+        /* Стили тёмной темы */
+        body.dark-theme {
+            background-color: #121212;
+            color: #e0e0e0;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
+        .container.dark-theme {
+            background-color: #333;
+            color: #e0e0e0;
         }
 
-        input[type="text"], input[type="file"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        label, input[type="text"], textarea, button {
+            color: inherit;
         }
 
         button {
@@ -55,14 +55,6 @@
 
         button:hover {
             background-color: #0056b3;
-        }
-
-        .theme-options {
-            margin-bottom: 20px;
-        }
-
-        .theme-options label {
-            margin-right: 10px;
         }
     </style>
 </head>
@@ -80,7 +72,7 @@
                     <label for="lightTheme">Светлая</label>
 
                     <input type="radio" id="darkTheme" name="theme" value="dark">
-                    <label for="darkTheme">Темная</label>
+                    <label for="darkTheme">Тёмная</label>
                 </div>
                 <button type="button" onclick="saveTheme()">Сохранить</button>
             </form>
@@ -96,40 +88,29 @@
                 <label for="description">Описание профиля:</label>
                 <textarea id="description" name="description" rows="4" placeholder="Введите описание"></textarea>
 
-                <label for="photo1">Фото 1:</label>
-                <input type="file" id="photo1" name="photo1" accept="image/*">
-
-                <label for="photo2">Фото 2:</label>
-                <input type="file" id="photo2" name="photo2" accept="image/*">
-
-                <label for="photo3">Фото 3:</label>
-                <input type="file" id="photo3" name="photo3" accept="image/*">
-
-                <label for="photo4">Фото 4:</label>
-                <input type="file" id="photo4" name="photo4" accept="image/*">
-
+                <!-- Фотографии и кнопка Сохранить -->
                 <button type="button" onclick="saveProfile()">Сохранить</button>
             </form>
         </div>
     </div>
 
     <script>
+        function applyTheme(theme) {
+            document.body.classList.toggle('dark-theme', theme === 'dark');
+            document.querySelector('.container').classList.toggle('dark-theme', theme === 'dark');
+        }
+
         function saveTheme() {
             const theme = document.querySelector('input[name="theme"]:checked').value;
+            applyTheme(theme);
             alert("Вы выбрали тему: " + theme);
-            // Здесь можно добавить код для сохранения выбранной темы на сервере
         }
 
         function saveProfile() {
             const price = document.getElementById('price').value;
             const description = document.getElementById('description').value;
-            const photo1 = document.getElementById('photo1').files[0];
-            const photo2 = document.getElementById('photo2').files[0];
-            const photo3 = document.getElementById('photo3').files[0];
-            const photo4 = document.getElementById('photo4').files[0];
 
             alert("Настройки профиля сохранены!\nСтоимость: " + price + "\nОписание: " + description);
-            // Здесь можно добавить код для отправки данных на сервер
         }
     </script>
 </body>

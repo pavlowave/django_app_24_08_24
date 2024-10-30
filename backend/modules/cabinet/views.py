@@ -49,13 +49,10 @@ class CabinetAPIView(APIView):
         except EmptyPage:
             users = paginator.page(paginator.num_pages)
 
-        # Сериализация данных пользователей
-        user_data = UserSerializer(users, many=True).data
-
         # Ответ в формате JSON
         context = {
-            'current_user': UserSerializer(user).data,  # Информация о текущем пользователе
-            'users': user_data,  # Информация о всех пользователях (с учетом роли)
+            'current_user': UserSerializer(user).data,
+            'users': users,
             'page': page_number,
             'roles_to_assign': roles_to_assign,
             'total_pages': paginator.num_pages,
@@ -93,6 +90,8 @@ class CabinetAPIView(APIView):
 
 
 class LogoutView(View):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         user = request.user
         if user.is_authenticated:
