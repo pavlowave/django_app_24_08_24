@@ -1,19 +1,37 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model
-from django.contrib.auth import logout
+from django.shortcuts import render
+from django.contrib.auth import get_user_model, logout
 from django.http import HttpResponseRedirect
 from django.views import View
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .serializers import UserSerializer
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 
 class CabinetAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
+    def people_in_gym(self):
+        """ Возвращает количество людей, находящихся в зале. """
+        return User.objects.filter(in_gym=True).count()
+
+
+    @staticmethod
+    def auto_logout_users():
+        now = timezone.now()
+        users_in_gym = User.objects.filter(in_gym=True)
+        for user in users_in_gym:
+            print(f"Проверяем пользователя {user.id}: время в зале - {now - user.entry_time}")
+            if now - user.entry_time > timedelta(minutes=1):
+                print(f"Выводим пользователя {user.id} из зала.")
+                user.in_gym = False
+                user.save()
+
 
     def get_user_list(self, user):
         """ Возвращает список пользователей в зависимости от роли текущего пользователя. """
@@ -37,6 +55,7 @@ class CabinetAPIView(APIView):
         user = request.user
         users_list = self.get_user_list(user)
         roles_to_assign = self.get_roles_to_assign(user)
+        people_in_gym = self.people_in_gym()
 
         # Пагинация
         page_number = request.GET.get('page', 1)
@@ -52,6 +71,7 @@ class CabinetAPIView(APIView):
         # Ответ в формате JSON
         context = {
             'current_user': UserSerializer(user).data,
+            'people_in_gym': people_in_gym,
             'users': users,
             'page': page_number,
             'roles_to_assign': roles_to_assign,

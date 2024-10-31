@@ -9,16 +9,6 @@ from datetime import timedelta
 User = get_user_model()
 
 
-def admin_page(request):
-    people_in_gym = User.objects.filter(in_gym=True).count()  # Счетчик людей в зале
-    users = User.objects.all()
-    context = {
-        'people_in_gym': people_in_gym,
-        'users': users,
-    }
-    return render(request, 'roles/admin.html', context)
-
-
 class ScanUserAPIView(APIView):
     def post(self, request, *args, **kwargs):
         qr_code = request.data.get('qr_code')  # Получаем QR-код из запроса
@@ -38,13 +28,3 @@ class ScanUserAPIView(APIView):
 
         except User.DoesNotExist:
             return Response({"error": "Пользователь не найден"}, status=status.HTTP_404_NOT_FOUND)
-
-
-
-def auto_logout_users():
-    now = timezone.now()
-    users_in_gym = User.objects.filter(in_gym=True)
-    for user in users_in_gym:
-        if now - user.entry_time > timedelta(minutes=90):
-            user.in_gym = False
-            user.save()

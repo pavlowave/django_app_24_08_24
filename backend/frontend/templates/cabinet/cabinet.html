@@ -40,6 +40,10 @@
             <a href="#">Оплата</a>
         </div>
 
+        <!-- Отображение общего количества людей в зале -->
+        <h3>Сейчас в зале:</h3>
+        <p><strong>{{ people_in_gym }}</strong> человек(а)</p>
+        
         <!-- Кнопка профиля -->
         <div class="profile-container">
             <img src="{{ current_user.photo }}" alt="Фото пользователя" class="profile-button" onclick="toggleProfileDropdown()" style="width: 50px; height: 50px; cursor: pointer;">
