@@ -11,7 +11,9 @@ from .serializers import UserSerializer
 from django.utils import timezone
 from datetime import timedelta
 
+
 User = get_user_model()
+
 
 class CabinetAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -25,10 +27,9 @@ class CabinetAPIView(APIView):
     def auto_logout_users():
         now = timezone.now()
         users_in_gym = User.objects.filter(in_gym=True)
+
         for user in users_in_gym:
-            print(f"Проверяем пользователя {user.id}: время в зале - {now - user.entry_time}")
-            if now - user.entry_time > timedelta(minutes=1):
-                print(f"Выводим пользователя {user.id} из зала.")
+            if now - user.entry_time > timedelta(minutes=10):
                 user.in_gym = False
                 user.save()
 
@@ -56,6 +57,7 @@ class CabinetAPIView(APIView):
         users_list = self.get_user_list(user)
         roles_to_assign = self.get_roles_to_assign(user)
         people_in_gym = self.people_in_gym()
+        self.auto_logout_users()
 
         # Пагинация
         page_number = request.GET.get('page', 1)
