@@ -22,14 +22,14 @@
 4. Создаем файл .env со следующим содержимым::
     ```
     DEBUG=True
-    SECRET_KEY=h+8hy9&ye)gslawy0oij)kum=^4ko)enij42f)4ys@q+b+y_k1
-    EMAIL_HOST = 'smtp.yandex.ru'
-    EMAIL_PORT = 465
+    SECRET_KEY=
+    EMAIL_HOST = 
+    EMAIL_PORT = 
     EMAIL_USE_SSL = True
     EMAIL_USE_TLS = False
-    EMAIL_HOST_USER = 'pavlowave@yandex.ru'
-    EMAIL_HOST_PASSWORD = 'waufrybbzzghroly'
-    DEFAULT_FROM_EMAIL = 'pavlowave@yandex.ru'
+    EMAIL_HOST_USER = 
+    EMAIL_HOST_PASSWORD = 
+    DEFAULT_FROM_EMAIL = 
     ```
 
 
